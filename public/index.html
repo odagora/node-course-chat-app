@@ -8,5 +8,20 @@
 </head>
 <body>
   <p>Welcome to the chat app</p>
+  <!-- We load the script available thanks to socket.io module -->
+  <script
+   src="/socket.io/socket.io.js"></script>
+  <!-- We next call the 'io' method -->
+   <script type="text/javascript">
+     var socket = io();
+     //We can register an event in the frontend as well. It will show in the console tab in the chrome-dev tools:
+     socket.on('connect', () => {
+       console.log('Connected to the server');
+    //For the disconnect case:
+    socket.on('disconnect', () => {
+      console.log('Disconnected to the server');
+    });
+     });
+   </script>
 </body>
 </html>
