@@ -20,6 +20,27 @@ app.use(express.static(publicPath));
 //We register an event listener to use with 'socket.io'. In this case when a connection is established:
 io.on('connection', (socket) => {
   console.log('New user connected');
+  //Event emit for a new email from the server to the client:
+  socket.emit('newEmail', {
+    from: 'example@example.com',
+    text: 'Hey whats up',
+    createdAt: 123
+  });
+  //Event for a 'createEmail' from the client to the server:
+  // socket.on('createEmail', (newEmail) =>{
+  //   console.log('createEmail', newEmail);
+  // });
+  // Event fot the 'createMessage' function:
+  socket.on('createMessage', (message) => {
+    console.log('createMessage', message);
+  });
+  //Event emit for a 'newMessage' from the server to the client:
+  socket.emit('newMessage', {
+    from: 'example@exaxmple.com',
+    text: 'Hello',
+    createdAt: 123
+  });
+
   //We register another event that fires when the user closes the tab/window with the connection:
   socket.on('disconnect', () => {
     console.log('User disconnected');
