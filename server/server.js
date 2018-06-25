@@ -30,15 +30,33 @@ io.on('connection', (socket) => {
   // socket.on('createEmail', (newEmail) =>{
   //   console.log('createEmail', newEmail);
   // });
+
+  //Socket.emit from 'Admin' with text 'Welcome to the chat app':
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat app'
+  });
+  //Socket.broadcast.emit from 'Admin' with text 'New user joined':
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New user joined'
+  });
+
   // Event fot the 'createMessage' function:
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
-    //emit an event for every user connected with the 'io':
-    io.emit('newMessage', {
-      from: message.from,
-      text: message.text,
-      createdAt: new Date().getTime()
-    });
+    //Emit an event for every user connected with the 'io':
+    // io.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // });
+    //To emit an event to everybody but this socket, we use the broadcast function:
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // });
   });
   //Event emit for a 'newMessage' from the server to the client:
   // socket.emit('newMessage', {
