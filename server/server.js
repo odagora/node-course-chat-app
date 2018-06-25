@@ -6,6 +6,9 @@ const port = process.env.PORT || 3000;
 const socketIO = require('socket.io');
 // console.log(publicPath);
 
+//Import the 'generateMessage' file:
+const {generateMessage} = require('./utils/message');
+
 //We import express framework to create the server:
 const express = require('express');
 var app = express();
@@ -32,25 +35,15 @@ io.on('connection', (socket) => {
   // });
 
   //Socket.emit from 'Admin' with text 'Welcome to the chat app':
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app'
-  });
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
   //Socket.broadcast.emit from 'Admin' with text 'New user joined':
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined'
-  });
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
   // Event fot the 'createMessage' function:
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
     //Emit an event for every user connected with the 'io':
-    // io.emit('newMessage', {
-    //   from: message.from,
-    //   text: message.text,
-    //   createdAt: new Date().getTime()
-    // });
+    io.emit('newMessage', generateMessage(message.from, message.text));
     //To emit an event to everybody but this socket, we use the broadcast function:
     // socket.broadcast.emit('newMessage', {
     //   from: message.from,
