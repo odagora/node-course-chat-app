@@ -21,11 +21,11 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
   //Event emit for a new email from the server to the client:
-  socket.emit('newEmail', {
-    from: 'example@example.com',
-    text: 'Hey whats up',
-    createdAt: 123
-  });
+  // socket.emit('newEmail', {
+  //   from: 'example@example.com',
+  //   text: 'Hey whats up',
+  //   createdAt: 123
+  // });
   //Event for a 'createEmail' from the client to the server:
   // socket.on('createEmail', (newEmail) =>{
   //   console.log('createEmail', newEmail);
@@ -33,13 +33,19 @@ io.on('connection', (socket) => {
   // Event fot the 'createMessage' function:
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
+    //emit an event for every user connected with the 'io':
+    io.emit('newMessage', {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    });
   });
   //Event emit for a 'newMessage' from the server to the client:
-  socket.emit('newMessage', {
-    from: 'example@exaxmple.com',
-    text: 'Hello',
-    createdAt: 123
-  });
+  // socket.emit('newMessage', {
+  //   from: 'example@exaxmple.com',
+  //   text: 'Hello',
+  //   createdAt: 123
+  // });
 
   //We register another event that fires when the user closes the tab/window with the connection:
   socket.on('disconnect', () => {

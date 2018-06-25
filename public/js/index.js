@@ -8,10 +8,10 @@ socket.on('connect', function () {
 //     text: 'Hey!'
 //   });
   //We emit the 'createMessage' event inside the connect method:
-  socket.emit('createMessage', {
-    from: 'Daniel',
-    text: 'Hey, how are you?'
-  });
+//   socket.emit('createMessage', {
+//     from: 'Daniel',
+//     text: 'Hey, how are you?'
+//   });
 });
 //For the disconnect case:
 socket.on('disconnect', function () {
