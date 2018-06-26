@@ -39,11 +39,13 @@ io.on('connection', (socket) => {
   //Socket.broadcast.emit from 'Admin' with text 'New user joined':
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
-  // Event fot the 'createMessage' function:
-  socket.on('createMessage', (message) => {
+  // Event fot the 'createMessage' function with a callback function as an argument for the aknowledgement:
+  socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);
     //Emit an event for every user connected with the 'io':
     io.emit('newMessage', generateMessage(message.from, message.text));
+    //We fire the callback back to the client to execute the function as the third argument in 'index.js':
+    callback('This is from the server');
     //To emit an event to everybody but this socket, we use the broadcast function:
     // socket.broadcast.emit('newMessage', {
     //   from: message.from,
