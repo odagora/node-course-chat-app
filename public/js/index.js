@@ -31,6 +31,19 @@ socket.on('newMessage', (message) => {
   $('#messages').append(li);
 });
 
+//Event listener for 'newLocationMessage':
+socket.on('newLocationMessage', function (message) {
+  var li = $('<li></li>');
+  //Variable for the anchor text:
+  var a = $('<a target="_blank">My current location</a>');
+  li.text(`${message.from}: `);
+  //Add an html attribute via jQuery:
+  a.attr('href', message.url);
+  li.append(a);
+  //Append the message as the last child:
+  $('#messages').append(li);
+});
+
 //Event emitted to the server with a third argument as a callback function. This function will be fired when the aknowledgement arrives at a client:
 // socket.emit('createMessage', {
 //   from: 'Frank',
@@ -47,5 +60,22 @@ $('#message-form').on('submit', function (e) {
     text: $('[name=message]').val()
   }, function () {
 
+  });
+});
+
+//Geolocation API use to show the user's actual position:
+var locationButton = $('#send-location');
+locationButton.on('click', function () {
+  if (!navigator.geolocation) {
+    return alert('Geolocation not supported by your browser.');
+  }
+  navigator.geolocation.getCurrentPosition(function (position) {
+      // console.log(position);
+      socket.emit('createLocationMessage', {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
+  }, function () {
+    alert('Unable to fetch location.');
   });
 });

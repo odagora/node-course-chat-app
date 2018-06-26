@@ -7,7 +7,7 @@ const socketIO = require('socket.io');
 // console.log(publicPath);
 
 //Import the 'generateMessage' file:
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 
 //We import express framework to create the server:
 const express = require('express');
@@ -52,6 +52,11 @@ io.on('connection', (socket) => {
     //   text: message.text,
     //   createdAt: new Date().getTime()
     // });
+  });
+
+  //Event listener of 'createLocationMessage':
+  socket.on('createLocationMessage', (coords) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
   });
   //Event emit for a 'newMessage' from the server to the client:
   // socket.emit('newMessage', {
