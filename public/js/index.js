@@ -55,11 +55,13 @@ socket.on('newLocationMessage', function (message) {
 //jQuery process to manipulate the DOM of 'index.html'. We use the 'preventDefault' method to avoid the page refresh on submit by default and override the behaviour with the socket.io events:
 $('#message-form').on('submit', function (e) {
   e.preventDefault();
+  var messageTextbox = $('[name=message]');
   socket.emit('createMessage', {
     from: "User",
-    text: $('[name=message]').val()
+    text: messageTextbox.val()
   }, function () {
-
+    //Clear the input field after message is sent:
+    messageTextbox.val('');
   });
 });
 
@@ -69,13 +71,18 @@ locationButton.on('click', function () {
   if (!navigator.geolocation) {
     return alert('Geolocation not supported by your browser.');
   }
+  //To disable 'send location' button when processing api request:
+  locationButton.attr('disabled', 'disabled').text('Sending location...');
   navigator.geolocation.getCurrentPosition(function (position) {
       // console.log(position);
+      // Enable 'send location' button to new request:
+      locationButton.removeAttr('disabled').text('Send location');
       socket.emit('createLocationMessage', {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       });
   }, function () {
+    locationButton.removeAttr('disabled').text('Send location');
     alert('Unable to fetch location.');
   });
 });
