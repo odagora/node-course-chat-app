@@ -1,4 +1,22 @@
 var socket = io();
+
+//'scrollToBottom' function using 'jQuery' methods to grab the selectors and properties:
+function scrollToBottom () {
+  //Selectors
+  var messages = $('#messages');
+  var newMessage = messages.children('li:last-child');
+  //Heights
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop= messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var newMessageHeight = newMessage.innerHeight();
+  var lastMessageHeight = newMessage.prev().innerHeight();
+  //scroll to bottom if the user is close to the bottom:
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight);
+  }
+};
+
 //We can register an event in the frontend as well. It will show in the console tab in the chrome-dev tools. We use conventional functions instead of arrow functions to avoid crashing in browsers like safari, IE:
 socket.on('connect', function () {
   console.log('Connected to the server');
@@ -39,6 +57,8 @@ socket.on('newMessage', (message) => {
   });
   //Append the message as the last child:
   $('#messages').append(html);
+  //Call of the 'scrollToBottom' function:
+  scrollToBottom();
 });
 
 //Event listener for 'newLocationMessage':
@@ -63,6 +83,8 @@ socket.on('newLocationMessage', function (message) {
   });
   //Append the message as the last child:
   $('#messages').append(html);
+  //Call of the 'scrollToBottom' function:
+  scrollToBottom();
 });
 
 //Event emitted to the server with a third argument as a callback function. This function will be fired when the aknowledgement arrives at a client:
