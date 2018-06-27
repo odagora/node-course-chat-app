@@ -27,25 +27,42 @@ socket.on('newMessage', (message) => {
   //Use of the 'moment.js' library to display the time:
   var formattedTime = moment(message.createdAt).format('h:mm a');
   //Use of jQuery to display the messages in the 'index.html' file as an ordered list:
-  var li = $('<li></li>');
-  li.text(`${message.from} ${formattedTime}: ${message.text}`);
+  // var li = $('<li></li>');
+  // li.text(`${message.from} ${formattedTime}: ${message.text}`);
+
+  //Use of 'mustache.js' to display the messages in the 'index.html' file:
+  var template = $('#message-template').html();
+  var html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
   //Append the message as the last child:
-  $('#messages').append(li);
+  $('#messages').append(html);
 });
 
 //Event listener for 'newLocationMessage':
 socket.on('newLocationMessage', function (message) {
   //Use of the 'moment.js' library to display the time:
   var formattedTime = moment(message.createdAt).format('h:mm a');
-  var li = $('<li></li>');
+  // var li = $('<li></li>');
   //Variable for the anchor text:
-  var a = $('<a target="_blank">My current location</a>');
-  li.text(`${message.from} ${formattedTime}: `);
+  // var a = $('<a target="_blank">My current location</a>');
+  // li.text(`${message.from} ${formattedTime}: `);
   //Add an html attribute via jQuery:
-  a.attr('href', message.url);
-  li.append(a);
+  // a.attr('href', message.url);
+  // li.append(a);
+
+  //Use of 'mustache.js' to display the messages in the 'index.html' file:
+  var template = $('#location-message-template').html();
+  var html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    url: message.url,
+    createdAt: formattedTime
+  });
   //Append the message as the last child:
-  $('#messages').append(li);
+  $('#messages').append(html);
 });
 
 //Event emitted to the server with a third argument as a callback function. This function will be fired when the aknowledgement arrives at a client:
