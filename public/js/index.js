@@ -23,20 +23,24 @@ socket.on('disconnect', function () {
 // });
 
 socket.on('newMessage', (message) => {
-  console.log('newMessage', message);
+  // console.log('newMessage', message);
+  //Use of the 'moment.js' library to display the time:
+  var formattedTime = moment(message.createdAt).format('h:mm a');
   //Use of jQuery to display the messages in the 'index.html' file as an ordered list:
   var li = $('<li></li>');
-  li.text(`${message.from}: ${message.text}`);
+  li.text(`${message.from} ${formattedTime}: ${message.text}`);
   //Append the message as the last child:
   $('#messages').append(li);
 });
 
 //Event listener for 'newLocationMessage':
 socket.on('newLocationMessage', function (message) {
+  //Use of the 'moment.js' library to display the time:
+  var formattedTime = moment(message.createdAt).format('h:mm a');
   var li = $('<li></li>');
   //Variable for the anchor text:
   var a = $('<a target="_blank">My current location</a>');
-  li.text(`${message.from}: `);
+  li.text(`${message.from} ${formattedTime}: `);
   //Add an html attribute via jQuery:
   a.attr('href', message.url);
   li.append(a);
