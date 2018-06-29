@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Chat | ChatApp</title>
+</head>
+<body class="chat">
+  <div class="chat__sidebar">
+    <h3>People</h3>
+    <div id="users"></div>
+  </div>
+  <div class="chat__main">
+    <!-- Ordered list field to display the messages -->
+    <ol id="messages" class="chat__messages"></ol>
+    <div class="chat__footer">
+      <!-- Form to input the messages -->
+      <form id="message-form">
+        <input type="text" name="message" value="" placeholder="Message" autofocus autocomplete="off">
+        <input type="submit" class="submit" value="Send">
+      </form>
+      <button id="send-location" type="button" name="button">Send location</button>
+    </div>
+  </div>
+  <!-- Script to generate the html via 'mustache.js' -->
+  <script id="message-template" type="text/template">
+    <li class="message">
+      <div class="message__title">
+        <h4>{{from}}</h4>
+        <span>{{createdAt}}</span>
+      </div>
+      <div class="message__body">
+        <p>{{text}}</p>
+      </div>
+    </li>
+  </script>
+  <script id="location-message-template" type="text/template">
+    <li class="message">
+      <div class="message__title">
+        <h4>{{from}}</h4>
+        <span>{{createdAt}}</span>
+      </div>
+      <div class="message__body">
+        <p><a href="{{url}}" target="_blank">My current location</a></p>
+      </div>
+    </li>
+  </script>
+  <!-- We load the script available thanks to socket.io module -->
+  <script
+   src="/socket.io/socket.io.js"></script>
+   <!-- jQuery include to manipulate the DOM in the form data -->
+   <script type="text/javascript" src="/js/libs/jquery-3.3.1.min.js"></script>
+   <!-- 'moment.js' library import to use it in the frontend -->
+   <script type="text/javascript" src="js/libs/moment.js"></script>
+   <!-- 'mustache.js' template engine for html rendering -->
+   <script type="text/javascript" src="/js/libs/mustache.js"></script>
+   <!-- We next call the 'io' method -->
+   <script type="text/javascript" src="js/chat.js">
+   </script>
+</body>
+</html>
