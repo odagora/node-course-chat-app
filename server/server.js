@@ -65,9 +65,12 @@ io.on('connection', (socket) => {
 
   // Event fot the 'createMessage' function with a callback function as an argument for the aknowledgement:
   socket.on('createMessage', (message, callback) => {
-    console.log('createMessage', message);
-    //Emit an event for every user connected with the 'io':
-    io.emit('newMessage', generateMessage(message.from, message.text));
+    // console.log('createMessage', message);
+    var user = users.getUser(socket.id);
+    if (user && isRealString(message.text)) {
+      //Emit an event for every user connected to the room with the 'to' and 'io':
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
     //We fire the callback back to the client to execute the function as the third argument in 'index.js':
     callback('This is from the server');
     //To emit an event to everybody but this socket, we use the broadcast function:
@@ -80,7 +83,11 @@ io.on('connection', (socket) => {
 
   //Event listener of 'createLocationMessage':
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    var user = users.getUser(socket.id);
+    if (user) {
+      //Emit an event for every user connected to the room with the 'to' and 'io':
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+    }
   });
   //Event emit for a 'newMessage' from the server to the client:
   // socket.emit('newMessage', {
