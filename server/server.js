@@ -9,6 +9,11 @@ const socketIO = require('socket.io');
 //Import the 'generateMessage' file:
 const {generateMessage, generateLocationMessage} = require('./utils/message');
 
+//Import the join validation file:
+const {isRealString} = require('./utils/validation');
+//Import the users file:
+const {Users} = require('./utils/users');
+
 //We import express framework to create the server:
 const express = require('express');
 var app = express();
@@ -16,7 +21,8 @@ var app = express();
 var server = http.createServer(app);
 //Then we pass the server to the 'socketIO' variable:
 var io = socketIO(server);
-
+//We createa new instance of the users:
+var users = new Users();
 //We define to use the 'public' folder as a static asset:
 app.use(express.static(publicPath));
 
@@ -34,10 +40,28 @@ io.on('connection', (socket) => {
   //   console.log('createEmail', newEmail);
   // });
 
-  //Socket.emit from 'Admin' with text 'Welcome to the chat app':
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
-  //Socket.broadcast.emit from 'Admin' with text 'New user joined':
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+  //Event listener to the 'join' emit:
+  socket.on('join', (params, callback) => {
+    //Check if the join data is real string:
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      return callback('Name and room name are required.')
+    }
+    //Socket.io rooms management:
+    socket.join(params.room);
+    //We remove the user from other rooms:
+    users.removeUser(socket.id);
+    //Then we add the user to the new room:
+    users.addUser(socket.id, params.name, params.room);
+    //To emit only for the users in a certain room:
+    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+    //Socket.emit from 'Admin' with text 'Welcome to the chat app':
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+    //Socket.broadcast.emit from 'Admin' with text 'New user joined':
+    // socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+    //To emit only for the users in a certain room:
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
+    callback();
+  });
 
   // Event fot the 'createMessage' function with a callback function as an argument for the aknowledgement:
   socket.on('createMessage', (message, callback) => {
@@ -67,7 +91,12 @@ io.on('connection', (socket) => {
 
   //We register another event that fires when the user closes the tab/window with the connection:
   socket.on('disconnect', () => {
-    console.log('User disconnected');
+    // console.log('User disconnected');
+    // We save the user removed:
+    var user = users.removeUser(socket.id);
+    //Then we emit two events: first to update the users list and second to print a message to the user:
+    io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+    io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
   });
 });
 

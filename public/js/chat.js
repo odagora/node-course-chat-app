@@ -19,7 +19,7 @@ function scrollToBottom () {
 
 //We can register an event in the frontend as well. It will show in the console tab in the chrome-dev tools. We use conventional functions instead of arrow functions to avoid crashing in browsers like safari, IE:
 socket.on('connect', function () {
-  console.log('Connected to the server');
+  // console.log('Connected to the server');
   //We emit the 'createEmail' event inside the connect method:
 //   socket.emit('createEmail', {
 //     to: 'jen@example.com',
@@ -30,11 +30,35 @@ socket.on('connect', function () {
 //     from: 'Daniel',
 //     text: 'Hey, how are you?'
 //   });
+
+//To join a chat room:
+  var params = $.deparam(window.location.search);
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err);
+      //Redirect to the root page (join page):
+      window.location.href = '/';
+    }
+    else {
+      console.log('No error');
+    }
+  });
 });
 //For the disconnect case:
 socket.on('disconnect', function () {
   console.log('Disconnected to the server');
 });
+
+//To update the users list in the room:
+socket.on('updateUserList', function (users) {
+  //We use jQuery to show the actual users list on the left side of the chat room:
+  var ol = $('<ol></ol>');
+  users.forEach(function (user) {
+    ol.append($('<li></li>').text(user));
+  });
+  $('#users').html(ol);
+});
+
 //For the 'newEmail' event.
 // socket.on('newEmail', function(email) {
 //   console.log('New Email', email);
